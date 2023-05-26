@@ -24,7 +24,9 @@ py main.py
 ## Wishlist
 These are some enhancements and features that I aim to add to this project, in the future.
 
-- **Will add soon**
+- **Dynamic/Pluggable Method**: Make various overwriting methods register dynamically, allowing anyone to add their own method and plug it in.
+- **Good error handling**: Common errors aren't handled, making it less user-friendly.
+- ...
 
 
 ## Contributing
@@ -43,4 +45,5 @@ If you like this project, you can give it a star. Thanks.
 ## Acknowledgements
 These are the references and resources I used to craft this project.
 
-- Will add soon
+- [Explanation on the DoD 5220.22-M standard](https://www.jetico.com/blog/dod-522022-m-explained-data-erasure-standards)
+- ...
