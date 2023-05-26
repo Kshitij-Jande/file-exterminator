@@ -9,5 +9,13 @@ def main():
 
     print(path_to_file)
 
+    confirm_delete = input(f'Please confirm to if want to delete file "{path_to_file}". (y/n): ')
+    if confirm_delete.lower() != 'y':
+        print('Canceled file deletion. Nothing happened.')
+        return
+
+    # TODO: Now need to write the actual logic
+    print('After fil deleted')
+
 if __name__ == "__main__":
     main()
