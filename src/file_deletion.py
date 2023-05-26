@@ -1,37 +1,45 @@
 import os
-import random
+import importlib
 
 
 class FileDeletion:
-    def __init__(self, path_to_file):
-        self.path_to_file = path_to_file
+    def __init__(self):
+        self.methods = {}
+        self.register_methods()
 
-    def securely_delete(self):
-        # Decided to initially implement the DoD 5220.22-M method
-        # https://www.jetico.com/blog/dod-522022-m-explained-data-erasure-standards
-        # 0, 1, R, 0, 0, 1, R
-        self.write_zeros()
-        self.write_ones()
-        self.write_random_data()
-        self.write_zeros()
-        self.write_zeros()
-        self.write_ones()
-        self.write_random_data()
-        os.remove(self.path_to_file)
+    def register_methods(self):
+        folder = "methods"
+        methods = os.listdir(folder)
 
-    def write_zeros(self):
-        orig_size = os.path.getsize(self.path_to_file)
-        with open(self.path_to_file, 'wb') as f:
-            f.write(b'\x00' * orig_size)
+        for file in methods:
+            if not file.endswith(".py"):
+                continue
+            name = file[:-3]
+            path = os.path.join(folder, file)
+            spec = importlib.util.spec_from_file_location(name, path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            method_class = getattr(module, "Method")
+            if not method_class:
+                continue
+            method_instance = method_class()
+            self.methods[name] = method_instance
 
-    def write_ones(self):
-        orig_size = os.path.getsize(self.path_to_file)
-        with open(self.path_to_file, 'wb') as f:
-            f.write(b'\xFF' * orig_size)
+    def get_methods(self):
+        methods_info = []
+        for file, method in self.methods.items():
+            methods_info.append(
+                {
+                    'id': file,
+                    'name': method.name,
+                    'description': method.description
+                }
+            )
+        return methods_info
 
-    def write_random_data(self):
-        orig_size = os.path.getsize(self.path_to_file)
-        with open(self.path_to_file, 'wb') as f:
-            random_data = bytes([random.randint(0, 255)
-                                for i in range(orig_size)])
-            f.write(random_data)
+    def securely_delete(self, method_id, path_to_file):
+        if method_id not in self.methods:
+            raise Exception("Method with that ID not found.")
+
+        method = self.methods[method_id]
+        method.erase_file(path_to_file)
